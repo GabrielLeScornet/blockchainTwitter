@@ -17,10 +17,13 @@ contract Twitter {
     uint256 _countUnDeletedTweets;
 
     function getTweetMap() public view returns (Tweet[] memory) {
-        Tweet[] memory ret = new Tweet[](_countAllTweets);
+        Tweet[] memory ret = new Tweet[](_countUnDeletedTweets);
+        uint256 j = 0;
         for (uint256 i = 0; i < _countAllTweets; i++) {
           if(tweetMap[i].isDeleted == false){
-            ret[i] = tweetMap[i];}
+            ret[j] = tweetMap[i];
+            j += 1;
+            }
         }
         return ret;
     }
