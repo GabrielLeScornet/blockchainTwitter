@@ -9,63 +9,66 @@ contract Twitter {
         address author;
         uint256 date;
         uint256 tweetId;
+        bool isDeleted;
     }
 
     mapping(uint256 => Tweet) tweetMap;
-    uint256 _countTweets;
-
-
-    event TweetModified(address owner, uint256 tweetId);
-    event TweetCreated(address owner, uint256 tweetId);
-    event TweetDeleted(address owner, uint256 tweetId);
-
-    constructor() {}
+    uint256 _countAllTweets;
+    uint256 _countUnDeletedTweets;
 
     function getTweetMap() public view returns (Tweet[] memory) {
-        Tweet[] memory ret = new Tweet[](_countTweets);
-        for (uint256 i = 0; i < _countTweets; i++) {
+        Tweet[] memory ret = new Tweet[](_countAllTweets);
+        for (uint256 i = 0; i < _countAllTweets; i++) {
+          if(tweetMap[i].isDeleted == false)
             ret[i] = tweetMap[i];
         }
         return ret;
     }
 
+    // Creer un tweet avec le texte en parametre
     function createTweet(string memory text) public {
-        tweetMap[_countTweets].text = text;
-        tweetMap[_countTweets].author = msg.sender;
-        tweetMap[_countTweets].date = block.timestamp;
-        tweetMap[_countTweets].tweetId = _countTweets;
 
-        emit TweetCreated(msg.sender, _countTweets);
+        // Assignation dans la map de tweets du nvx tweet et de ses attributs
+        tweetMap[_countAllTweets].text = text;
+        tweetMap[_countAllTweets].author = msg.sender;
+        tweetMap[_countAllTweets].date = block.timestamp;
+        tweetMap[_countAllTweets].isDeleted = false;
 
-        _countTweets += 1;
+        // Les tweets sont triés par date en leur associant un id qui grandit
+        // de 1 a chaque nouveau tweet.
+        tweetMap[_countAllTweets].tweetId = _countAllTweets;
+
+        _countUnDeletedTweets += 1 ;
+        _countAllTweets += 1;
     }
 
-    function updateTweet(string memory newtext, uint256 tweetId) public {
+    function updateTweet(string memory updatedText, uint256 tweetId) public {
+
+        // Verification de l'acces au tweet
         require(tweetMap[tweetId].date != 0, "Tweet should exist");
-        require(
-            tweetMap[tweetId].author == msg.sender,
-            "Tweet should be your own / exist"
-        );
+        require(tweetMap[tweetId].author == msg.sender,"Tweet should be yours");
 
-        tweetMap[tweetId].text = newtext;
+        // Modifidification du tweet trouvé et mise a jours de la date :
+        // Nous conservons le meme ordre, le tweetId informant sur la
+        // chronologie inital des tweets et l'heure date la plus récente
+        tweetMap[tweetId].text = updatedText;
         tweetMap[tweetId].date = block.timestamp;
-
-        emit TweetModified(msg.sender, tweetId);
     }
 
     function deleteTweet(uint256 tweetId) public {
-        require(tweetId < _countTweets, "Tweet does not exist");
-        require(
-            msg.sender == tweetMap[tweetId].author,
+        require(tweetId < _countAllTweets, "Tweet does not exist");
+        require(msg.sender == tweetMap[tweetId].author,
             "You must be tweet owner to delete tweet"
         );
 
-        if (tweetId != _countTweets - 1) {
-            tweetMap[tweetId] = tweetMap[_countTweets - 1];
-            tweetMap[tweetId].tweetId = tweetId;
+        // On attribut au tweet supprimer une date a 0, ne l'affichant pas
+        //  mais gardé en donnée avec un flag isDeleted (permettant l'affichage
+        // des tweets supprimés)
+        if (tweetId != _countAllTweets - 1) {
+            tweetMap[tweetId].isDeleted = true;
         }
-        _countTweets -= 1;
+        _countUnDeletedTweets -= 1;
 
-        emit TweetDeleted(msg.sender, tweetId);
     }
 }
+
