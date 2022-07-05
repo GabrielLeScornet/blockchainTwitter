@@ -19,8 +19,8 @@ contract Twitter {
     function getTweetMap() public view returns (Tweet[] memory) {
         Tweet[] memory ret = new Tweet[](_countAllTweets);
         for (uint256 i = 0; i < _countAllTweets; i++) {
-          if(tweetMap[i].isDeleted == false)
-            ret[i] = tweetMap[i];
+          if(tweetMap[i].isDeleted == false){
+            ret[i] = tweetMap[i];}
         }
         return ret;
     }
