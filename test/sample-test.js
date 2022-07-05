@@ -113,6 +113,14 @@ describe("Twitter", function () {
 
      deleteTweetTx = await  twitter.connect(addr1).deleteTweet(0);
     await deleteTweetTx.wait()
+    deleteTweetTx = await  twitter.connect(addr1).deleteTweet(0);
+    await deleteTweetTx.wait()
+    deleteTweetTx = await  twitter.connect(addr1).deleteTweet(0);
+    await deleteTweetTx.wait()
+    deleteTweetTx = await  twitter.connect(addr1).deleteTweet(0);
+    await deleteTweetTx.wait()
+    deleteTweetTx = await  twitter.connect(addr1).deleteTweet(2);
+    await deleteTweetTx.wait()
     console.log("Deuxième suppr res: ", await twitter.getTweetMap())
   });
 
