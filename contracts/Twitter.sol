@@ -9,18 +9,15 @@ contract Twitter {
         address author;
         uint256 date;
         uint256 tweetId;
-        bool isDeleted;
     }
 
     mapping(uint256 => Tweet) tweetMap;
     uint256 _countAllTweets;
-    uint256 _countUnDeletedTweets;
 
     function getTweetMap() public view returns (Tweet[] memory) {
         Tweet[] memory ret = new Tweet[](_countAllTweets);
-        uint256 j = 0;
         for (uint256 i = 0; i < _countAllTweets; i++) {
-           ret[j] = tweetMap[i];
+           ret[i] = tweetMap[i];
         }
         return ret;
     }
@@ -38,7 +35,6 @@ contract Twitter {
         // de 1 a chaque nouveau tweet.
         tweetMap[_countAllTweets].tweetId = _countAllTweets;
 
-        _countUnDeletedTweets += 1 ;
         _countAllTweets += 1;
     }
 
@@ -61,13 +57,11 @@ contract Twitter {
             "You must be tweet owner to delete tweet"
         );
 
-        // On attribut au tweet supprimer une date a 0, ne l'affichant pas
-        //  mais gardé en donnée avec un flag isDeleted (permettant l'affichage
-        // des tweets supprimés)
-        if (tweetId != _countAllTweets - 1) {
-            tweetMap[tweetId].isDeleted = true;
+       if (tweetId != _countAllTweets - 1) {
+            tweetMap[tweetId] = tweetMap[_countAllTweets - 1];
+            tweetMap[tweetId].tweetId = tweetId;
         }
-        _countUnDeletedTweets -= 1;
+        _countAllTweets -= 1;
 
     }
 }
