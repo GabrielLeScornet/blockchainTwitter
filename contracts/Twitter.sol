@@ -29,7 +29,6 @@ contract Twitter {
         tweetMap[_countAllTweets].text = text;
         tweetMap[_countAllTweets].author = msg.sender;
         tweetMap[_countAllTweets].date = block.timestamp;
-        tweetMap[_countAllTweets].isDeleted = false;
 
         // Les tweets sont triés par date en leur associant un id qui grandit
         // de 1 a chaque nouveau tweet.
