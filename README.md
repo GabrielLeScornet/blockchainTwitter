@@ -41,3 +41,4 @@ Here is what we tested to asure the good working of the project:
 - Tweet Creation tests
 - Tweet Deletion tests
 - Tweet Modification tests
+- Test Environement integration : Goerli
